@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Up</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 5rem;
+        }
+        .top-up-card {
+            width: 18rem;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-up-card card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Top Up Your Bankroll</h5>
+                <form action="/top-up" method="post">
+                    <div class="mb-3">
+                        <label for="top_up_amount" class="form-label">Amount to Top Up:</label>
+                        <input type="number" id="top_up_amount" name="top_up_amount" class="form-control" min="1" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Top Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
