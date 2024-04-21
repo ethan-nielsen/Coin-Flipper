@@ -63,5 +63,18 @@ def display_result():
                            result_text=session['bet_on'],
                            bankroll=session.get('bankroll', 1000))
 
+@app.route('/top-up', methods=['GET', 'POST'])
+def top_up():
+    if request.method == 'POST':
+        # Handle the form submission to update the bankroll
+        amount = int(request.form.get('top_up_amount', 0))
+        if amount > 0:
+            session['bankroll'] += amount
+        return redirect(url_for('bet'))  # Redirect to the bet page after topping up
+
+    # If it's a GET request, simply render the top-up page
+    return render_template('top_up.html')
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False)
