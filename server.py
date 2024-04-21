@@ -12,16 +12,11 @@ relay_pin = 17
 relay_line = chip.get_line(relay_pin)
 
 def trigger_relay():
-    try:
-        relay_line.request(consumer='relay', type=gpiod.LINE_REQ_DIR_OUT)
-        print("Activating the relay...")
-        relay_line.set_value(1)
-        time.sleep(5)  # Relay is active for 5 seconds
-        relay_line.set_value(0)
-        print("Deactivating the relay...")
-    finally:
-        relay_line.release()  # Ensure the GPIO pin is released regardless of what happens
-        print("GPIO resources released.")
+    print("Activating the relay...")
+    relay_line.set_value(1)
+    time.sleep(5)
+    relay_line.set_value(0)
+    print("Deactivating the relay...")
 
 @app.route('/bet', methods=['GET', 'POST'])
 def bet():
