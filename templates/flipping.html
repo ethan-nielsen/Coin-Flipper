@@ -26,16 +26,26 @@
         <div class="flip-card card text-center">
             <div class="card-body">
                 <h5 class="card-title">Coin is Flipping...</h5>
-                <!-- Embedding the GIF with specified dimensions and styling -->
                 <img src="https://media1.tenor.com/m/GFH_F9Bx6noAAAAC/coin-flip.gif" alt="Coin Flip GIF" class="card-img-top">
                 <p class="card-text">Please wait for the result...</p>
             </div>
         </div>
     </div>
     <script>
-        setTimeout(function() {
-            window.location.href = "{{ url_for('display_result') }}"; // Adjust this to your result displaying route
-        }, 2100); // Adjust the timeout to match the length of the GIF or as desired
+        fetch('/trigger-relay', { method: 'POST' })
+        .then(response => {
+            if (response.ok) {
+                console.log("Relay activated and deactivated.");
+                setTimeout(function() {
+                    window.location.href = "{{ url_for('display_result') }}";
+                }, 2100); // Delay redirect to allow GIF to display
+            } else {
+                console.error('Failed to trigger relay');
+            }
+        })
+        .catch(error => {
+            console.error('Error triggering the relay:', error);
+        });
     </script>
 </body>
 </html>
