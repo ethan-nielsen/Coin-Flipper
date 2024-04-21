@@ -54,7 +54,6 @@ def bet():
 
     return render_template('bet.html', bankroll=session['bankroll'])
 
-
 @app.route('/status')
 def status():
     return "<h1>Status: Server is running</h1>"
