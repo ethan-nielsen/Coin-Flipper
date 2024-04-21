@@ -1,23 +1,23 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 import random
-import gpiod
+#import gpiod
 import time
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 # Define the GPIO chip and pin
-chip = gpiod.Chip('gpiochip4')
-relay_pin = 17
-relay_line = chip.get_line(relay_pin)
-relay_line.request(consumer='relay', type=gpiod.LINE_REQ_DIR_OUT)
-
-def trigger_relay():
-    print("Activating the relay...")
-    relay_line.set_value(1)
-    time.sleep(5)
-    relay_line.set_value(0)
-    print("Deactivating the relay...")
+#####chip = gpiod.Chip('gpiochip4')
+#####relay_pin = 17
+#####relay_line = chip.get_line(relay_pin)
+#####relay_line.request(consumer='relay', type=gpiod.LINE_REQ_DIR_OUT)
+#####
+#####def trigger_relay():
+#####    print("Activating the relay...")
+#####    relay_line.set_value(1)
+#####    time.sleep(5)
+#####    relay_line.set_value(0)
+#####    print("Deactivating the relay...")
 
 @app.route('/bet', methods=['GET', 'POST'])
 def bet():
@@ -35,13 +35,21 @@ def bet():
         session['bet_on'] = bet_on
         session['result'] = random.choice(['Heads', 'Tails'])
 
+        # Check the result of the bet and update the bankroll accordingly
+        if session['result'] == session['bet_on']:
+            session['bankroll'] += bet_amount
+            session['result_text'] = "You won!"
+        else:
+            session['bankroll'] -= bet_amount
+            session['result_text'] = f"You lost ${bet_amount}!"
+
         return redirect(url_for('flip_coin'))
 
     return render_template('bet.html', bankroll=session['bankroll'])
 
 @app.route('/trigger-relay', methods=['POST'])
 def handle_relay():
-    trigger_relay()
+    #####trigger_relay()
     return "Relay deactivated", 200
 
 @app.route('/flip-coin')
