@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 import random
 from config.config import SECRET_KEY
-import gpiod
+####import gpiod
 import time
 
 app = Flask(__name__)
