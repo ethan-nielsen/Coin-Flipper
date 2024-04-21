@@ -1,4 +1,4 @@
-from flask import Flask, send_file, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for
 import random
 from config.config import SECRET_KEY
 import gpiod
@@ -17,33 +17,23 @@ def trigger_relay():
     print("Activating the relay...")  # Log when the relay is activated
     relay_line.set_value(1)  # Activate the relay (turn on the solenoid valve)
     time.sleep(5)            # Keep the solenoid valve activated for 5 seconds
-    print("Deactivating the relay...")  # Log when the relay is deactivated
     relay_line.set_value(0)  # Deactivate the relay (turn off the solenoid valve)
+    print("Deactivating the relay...")  # Log when the relay is deactivated
 
-# Initialize user's bankroll within a before-request handler
-@app.before_request
-def before_request():
-    if 'bankroll' not in session:
-        session['bankroll'] = 1000
-
-# Endpoint to check the status of the server
-@app.route('/status')
-def status():
-    return "<h1>Status: Server is running</h1>"
-
-# Endpoint to display the betting form and handle bet submissions
 @app.route('/bet', methods=['GET', 'POST'])
 def bet():
     if request.method == 'POST':
         bet_amount = int(request.form['bet_amount'])
         bet_on = request.form['bet_on']
 
+        # Trigger the relay as soon as a bet is placed
+        trigger_relay()
+
         result = random.choice(['heads', 'tails'])
 
         if result == bet_on:
             session['bankroll'] += bet_amount
             result_text = "You won!"
-            trigger_relay()  # Trigger the relay if the user wins
         else:
             session['bankroll'] -= bet_amount
             result_text = f"You lost ${bet_amount}!"
@@ -52,20 +42,22 @@ def bet():
 
     return render_template('bet.html', bankroll=session['bankroll'])
 
-# Endpoint to flip a coin
+@app.route('/status')
+def status():
+    return "<h1>Status: Server is running</h1>"
+
 @app.route('/flip-coin')
 def flip_coin():
     result = random.choice(['heads', 'tails'])
     result_text = "Heads" if result == "heads" else "Tails"
     return render_template('result.html', result=result.capitalize(), result_text=result_text, bankroll=session['bankroll'])
 
-# Endpoint to top up the bankroll
 @app.route('/top-up', methods=['GET', 'POST'])
 def top_up():
     if request.method == 'POST':
         amount = int(request.form['top_up_amount'])
         session['bankroll'] += amount
-        return redirect(url_for('bet'))  # Redirect to the betting page after topping up
+        return redirect(url_for('bet'))
 
     return render_template('top_up.html')
 
