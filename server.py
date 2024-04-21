@@ -1,21 +1,22 @@
 from flask import Flask, send_file, render_template, request, session, redirect, url_for
 import random
 from config.config import SECRET_KEY
-import RPi.GPIO as GPIO
+import gpiod
 import time
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 
-# GPIO setup
-GPIO.setmode(GPIO.BCM)  # BCM pin numbering
-relay_pin = 17           # GPIO pin connected to the relay
-GPIO.setup(relay_pin, GPIO.OUT)  # Set the pin as an output
+# Define the GPIO chip and pin
+chip = gpiod.Chip('gpiochip4')
+relay_pin = 17
+relay_line = chip.get_line(relay_pin)
+relay_line.request(consumer='relay', type=gpiod.LINE_REQ_DIR_OUT)
 
 def trigger_relay():
-    GPIO.output(relay_pin, True)  # Activate the relay (turn on the solenoid valve)
-    time.sleep(5)                 # Keep the solenoid valve activated for 5 seconds
-    GPIO.output(relay_pin, False) # Deactivate the relay (turn off the solenoid valve)
+    relay_line.set_value(1)  # Activate the relay (turn on the solenoid valve)
+    time.sleep(5)            # Keep the solenoid valve activated for 5 seconds
+    relay_line.set_value(0)  # Deactivate the relay (turn off the solenoid valve)
 
 # Initialize user's bankroll within a before-request handler
 @app.before_request
