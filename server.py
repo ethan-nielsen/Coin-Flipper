@@ -14,31 +14,42 @@ relay_line = chip.get_line(relay_pin)
 relay_line.request(consumer='relay', type=gpiod.LINE_REQ_DIR_OUT)
 
 def trigger_relay():
-    print("Activating the relay...")  # Log when the relay is activated
-    relay_line.set_value(1)  # Activate the relay (turn on the solenoid valve)
-    time.sleep(5)            # Keep the solenoid valve activated for 5 seconds
-    relay_line.set_value(0)  # Deactivate the relay (turn off the solenoid valve)
-    print("Deactivating the relay...")  # Log when the relay is deactivated
+    print("Activating the relay...")
+    relay_line.set_value(1)
+    time.sleep(5)
+    relay_line.set_value(0)
+    print("Deactivating the relay...")
 
 @app.route('/bet', methods=['GET', 'POST'])
 def bet():
+    # Ensure that bankroll is initialized
+    if 'bankroll' not in session:
+        session['bankroll'] = 1000
+
     if request.method == 'POST':
-        bet_amount = int(request.form['bet_amount'])
-        bet_on = request.form['bet_on']
+        try:
+            bet_amount = int(request.form.get('bet_amount', 0))
+            bet_on = request.form.get('bet_on', '')
+            
+            if not bet_amount or not bet_on:
+                return render_template('bet.html', error="Please fill all fields correctly.", bankroll=session['bankroll'])
 
-        # Trigger the relay as soon as a bet is placed
-        trigger_relay()
+            # Trigger the relay as soon as a bet is placed
+            trigger_relay()
 
-        result = random.choice(['heads', 'tails'])
+            result = random.choice(['heads', 'tails'])
 
-        if result == bet_on:
-            session['bankroll'] += bet_amount
-            result_text = "You won!"
-        else:
-            session['bankroll'] -= bet_amount
-            result_text = f"You lost ${bet_amount}!"
+            if result == bet_on:
+                session['bankroll'] += bet_amount
+                result_text = "You won!"
+            else:
+                session['bankroll'] -= bet_amount
+                result_text = f"You lost ${bet_amount}!"
 
-        return render_template('result.html', result=result.capitalize(), result_text=result_text, bankroll=session['bankroll'])
+            return render_template('result.html', result=result.capitalize(), result_text=result_text, bankroll=session['bankroll'])
+
+        except ValueError:
+            return render_template('bet.html', error="Invalid bet amount. Please enter a valid number.", bankroll=session['bankroll'])
 
     return render_template('bet.html', bankroll=session['bankroll'])
 
@@ -48,6 +59,8 @@ def status():
 
 @app.route('/flip-coin')
 def flip_coin():
+    if 'bankroll' not in session:
+        session['bankroll'] = 1000
     result = random.choice(['heads', 'tails'])
     result_text = "Heads" if result == "heads" else "Tails"
     return render_template('result.html', result=result.capitalize(), result_text=result_text, bankroll=session['bankroll'])
@@ -55,8 +68,9 @@ def flip_coin():
 @app.route('/top-up', methods=['GET', 'POST'])
 def top_up():
     if request.method == 'POST':
-        amount = int(request.form['top_up_amount'])
-        session['bankroll'] += amount
+        amount = int(request.form.get('top_up_amount', 0))
+        if amount:
+            session['bankroll'] += amount
         return redirect(url_for('bet'))
 
     return render_template('top_up.html')
