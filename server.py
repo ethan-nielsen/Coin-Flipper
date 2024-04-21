@@ -33,6 +33,9 @@ def bet():
             # Error handling if fields are not properly filled
             return render_template('bet.html', error="Please fill all fields correctly.", bankroll=session['bankroll'])
 
+        # Trigger the relay as soon as a bet is placed, before calculating the result
+        trigger_relay()
+
         # Processing the bet
         result = random.choice(['Heads', 'Tails'])
         session['result'] = result
@@ -50,6 +53,7 @@ def bet():
         return redirect(url_for('flip_coin'))
 
     return render_template('bet.html', bankroll=session['bankroll'])
+
 
 @app.route('/status')
 def status():
