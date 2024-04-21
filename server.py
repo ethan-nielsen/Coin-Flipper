@@ -60,14 +60,21 @@ def status():
 @app.route('/flip-coin')
 def flip_coin():
     if 'bankroll' not in session:
-        session['bankroll'] = 1000  # Default starting bankroll
+        session['bankroll'] = 1000  # Ensure 'bankroll' is initialized
 
     result = random.choice(['Heads', 'Tails'])
-    result_text = "Heads if you chose heads, tails if otherwise!"  # Example text
+    session['result'] = result.capitalize()
+    session['result_text'] = "The coin landed on: " + session['result']
 
-    # Redirect to the result page, passing the necessary variables
-    return render_template('result.html', result=result, result_text=result_text, bankroll=session['bankroll'])
+    # Render the flipping animation page before showing the result
+    return render_template('flipping.html')
 
+@app.route('/display-result')
+def display_result():
+    return render_template('result.html', 
+                           result=session.get('result', 'No flip yet'), 
+                           result_text=session.get('result_text', 'Try flipping the coin!'), 
+                           bankroll=session.get('bankroll', 1000))
 
 @app.route('/top-up', methods=['GET', 'POST'])
 def top_up():
