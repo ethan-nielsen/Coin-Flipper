@@ -14,8 +14,10 @@ relay_line = chip.get_line(relay_pin)
 relay_line.request(consumer='relay', type=gpiod.LINE_REQ_DIR_OUT)
 
 def trigger_relay():
+    print("Activating the relay...")  # Log when the relay is activated
     relay_line.set_value(1)  # Activate the relay (turn on the solenoid valve)
     time.sleep(5)            # Keep the solenoid valve activated for 5 seconds
+    print("Deactivating the relay...")  # Log when the relay is deactivated
     relay_line.set_value(0)  # Deactivate the relay (turn off the solenoid valve)
 
 # Initialize user's bankroll within a before-request handler
