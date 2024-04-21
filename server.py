@@ -60,10 +60,14 @@ def status():
 @app.route('/flip-coin')
 def flip_coin():
     if 'bankroll' not in session:
-        session['bankroll'] = 1000
-    result = random.choice(['heads', 'tails'])
-    result_text = "Heads" if result == "heads" else "Tails"
-    return render_template('result.html', result=result.capitalize(), result_text=result_text, bankroll=session['bankroll'])
+        session['bankroll'] = 1000  # Default starting bankroll
+
+    result = random.choice(['Heads', 'Tails'])
+    result_text = "Heads if you chose heads, tails if otherwise!"  # Example text
+
+    # Redirect to the result page, passing the necessary variables
+    return render_template('result.html', result=result, result_text=result_text, bankroll=session['bankroll'])
+
 
 @app.route('/top-up', methods=['GET', 'POST'])
 def top_up():

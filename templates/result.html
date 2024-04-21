@@ -23,7 +23,7 @@
         <div class="result-card card text-center">
             <div class="card-body">
                 <h5 class="card-title">Coin Flip Result</h5>
-                <img src="{{ url_for('static', filename=result + '.png') }}" class="card-img-top" alt="{{ result }}">
+                <img src="{{ url_for('static', filename=result.lower() + '.png') }}" class="card-img-top" alt="Result image">
                 <p class="card-text">The coin landed on: {{ result }}</p>
                 <p class="card-text">{{ result_text }}</p>
                 <p class="card-text">Your bankroll: ${{ bankroll }}</p>
