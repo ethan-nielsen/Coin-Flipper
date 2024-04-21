@@ -32,9 +32,6 @@ def status():
 # Endpoint to display the betting form and handle bet submissions
 @app.route('/bet', methods=['GET', 'POST'])
 def bet():
-    if 'bankroll' not in session:
-        session['bankroll'] = 1000
-
     if request.method == 'POST':
         bet_amount = int(request.form['bet_amount'])
         bet_on = request.form['bet_on']
