@@ -4,7 +4,7 @@ import gpiod
 import time
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+app.secret_key = '12345'
 
 # GPIO chip and pin, raspberry pi5
 chip = gpiod.Chip('gpiochip4')
