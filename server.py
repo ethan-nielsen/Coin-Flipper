@@ -6,7 +6,7 @@ import time
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-# Define the GPIO chip and pin
+# GPIO chip and pin, raspberry pi5
 chip = gpiod.Chip('gpiochip4')
 relay_pin = 17
 relay_line = chip.get_line(relay_pin)
@@ -35,7 +35,7 @@ def bet():
         session['bet_on'] = bet_on
         session['result'] = random.choice(['Heads', 'Tails'])
 
-        # Check the result of the bet and update the bankroll accordingly
+        # Check the result of the bet and update the bankroll
         if session['result'] == session['bet_on']:
             session['bankroll'] += bet_amount
             session['result_text'] = "You won!"
@@ -72,7 +72,7 @@ def top_up():
             session['bankroll'] += amount
         return redirect(url_for('bet'))  # Redirect to the bet page after topping up
 
-    # If it's a GET request, simply render the top-up page
+    # If it's a GET request render the top-up page
     return render_template('top_up.html')
 
 
